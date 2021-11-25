@@ -100,5 +100,55 @@ RSpec.describe Parking, type: :model do
         expect(@parking.amount).to eq(300)
       end
     end
+
+    context "long-term" do
+      before do
+        @user = User.create email: 'test@example.com', password: '12345678'
+        @parking = Parking.new parking_type: 'long-term', user: @user, start_at: @time
+      end
+
+      it "3 hours should be 12 yuan" do
+        @parking.end_at = @time + 3.hours
+        @parking.calculate_amount
+        expect(@parking.amount).to eq(1200)
+      end
+
+      it "6 hours should be 12 yuan" do
+        @parking.end_at = @time + 6.hours
+        @parking.calculate_amount
+        expect(@parking.amount).to eq(1200)
+      end
+
+      it "9 hours should be 16 yuan" do
+        @parking.end_at = @time + 9.hours
+        @parking.calculate_amount
+        expect(@parking.amount).to eq(1600)
+      end
+
+      it "24 hours should be 16 yuan" do
+        @parking.end_at = @time + 1.day
+        @parking.calculate_amount
+        expect(@parking.amount).to eq(1600)
+      end
+
+      it "25 hours should be 32 yuan" do
+        @parking.end_at = @time + 25.hours
+        @parking.calculate_amount
+        expect(@parking.amount).to eq(3200)
+      end
+
+      it "2 days should be 32 yuan" do
+        @parking.end_at = @time + 2.days
+        @parking.calculate_amount
+        expect(@parking.amount).to eq(3200)
+      end
+
+      it "50 hours should be 48 yuan" do
+        @parking.end_at = @time + 50.hours
+        @parking.calculate_amount
+        expect(@parking.amount).to eq(4800)
+      end
+
+    end
   end
 end
